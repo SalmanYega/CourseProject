@@ -1,0 +1,46 @@
+---
+title: "Human Activity Recognition - Weight Lifting Exercise Analysis"
+author: "Salman Yega"
+date: "`r format(Sys.Date(), '30 04 2025')`"
+output: html_document
+---
+
+## **1. Pendahuluan**
+Proyek ini menganalisis data dari accelerometer untuk memprediksi kualitas latihan angkat beban.
+
+## **2. Persiapan Data**
+```{r setup, include=FALSE}
+library(caret)
+library(randomForest)
+set.seed(123)
+
+# Load data
+training <- read.csv("pml-training.csv")
+testing <- read.csv("pml-testing.csv")
+
+1. Pemrosesan Data
+# Hapus kolom dengan >90% NA
+training <- training[, colSums(is.na(training)) < nrow(training)*0.9]
+testing <- testing[, names(training)[-which(names(training)=="classe")]]
+
+# Hapus kolom non-fitur
+cols_to_remove <- grep("timestamp|user_name|X", names(training))
+training <- training[, -cols_to_remove]
+testing <- testing[, -cols_to_remove]
+
+2. Pemodelan
+# Split data
+inTrain <- createDataPartition(training$classe, p=0.7, list=FALSE)
+trainSet <- training[inTrain, ]
+validSet <- training[-inTrain, ]
+
+# Latih model Random Forest
+model <- randomForest(classe ~ ., data=trainSet, ntree=100)
+
+3. Validasi
+pred_valid <- predict(model, validSet)
+confusionMatrix(pred_valid, validSet$classe)
+
+4. Prediksi
+final_predictions <- predict(model, testing)
+final_predictions
