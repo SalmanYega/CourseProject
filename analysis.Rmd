@@ -1,0 +1,19 @@
+---
+title: "Human Activity Recognition - Weight Lifting Exercise Analysis"
+author: "[Nama Anda]"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: html_document
+---
+
+## **1. Pendahuluan**
+Proyek ini menganalisis data dari accelerometer untuk memprediksi kualitas latihan angkat beban.
+
+## **2. Persiapan Data**
+```{r setup, include=FALSE}
+library(caret)
+library(randomForest)
+set.seed(123)
+
+# Load data
+training <- read.csv("pml-training.csv")
+testing <- read.csv("pml-testing.csv")
